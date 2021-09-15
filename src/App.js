@@ -88,8 +88,7 @@ entries.map(entry => {
 
   const handleAddTxn = () =>{
 
-    if(amount === null || description === ""){
-      // setEmptyFlag(true);
+    if(amount === "" || description === ""){
       alert("Please enter value/values!!!");
       return;
     }
@@ -98,6 +97,11 @@ entries.map(entry => {
       resetEntry();
       return;
     }
+    if(amount > balance && isExpense){
+      alert("Cannot spend more than the balance in account");
+      return;
+    }
+
     var newEntry = entries.length+1;
     const updatedHistoryBlock = entries.concat({id: newEntry, description:description, value: amount, isExpense});
     setEntries(updatedHistoryBlock);
