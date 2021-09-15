@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Grid, Segment, Icon, Confirm, Container } from "semantic-ui-react";
 
 // export default function History({description, value, isExpense= false}){
-export default function History ({entry:{id,description, value, isExpense= false}, handleDelete, editModalEntry}){
+export default function History ({entry:{id,description, value, isExpense= false}, handleDelete, modalDisplayValues}){
 const [ open, setOpen ] = useState(false);
 const [ result, setResult] = useState("");
 
@@ -31,7 +31,7 @@ const handleConfirm =() =>{
             <Grid.Column width={3} textAlign="right">{`$`+value}            
             </Grid.Column>
             <Grid.Column width={3} textAlign="right">
-                <Icon name="edit" color="green" style={{cursor:"pointer"}} onClick={()=> editModalEntry(id)}/>
+                <Icon name="edit" color="green" style={{cursor:"pointer"}} onClick={()=> modalDisplayValues(id)}/>
                 {/* <Icon name="trash" color="red" style={{cursor:"pointer"}} onClick={()=>handleDelete(id)}/> */}
                 <Icon name="trash" color="red" style={{cursor:"pointer"}} onClick={handleShow} />
             </Grid.Column>

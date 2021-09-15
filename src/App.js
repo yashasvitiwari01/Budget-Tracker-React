@@ -38,6 +38,14 @@ function App() {
       isExpense: true
     }
   ]
+
+  var errorFlags= {
+    1: "Amount Field cannot be left blank!",
+    2: "Please enter valid value for amount",
+    3: "Description field cannot be left blank",
+    4: "Expense cannot exceed the balance",
+    5: "Cannot spend more than the balance in account"
+  }
   const [entries, setEntries] = useState(initialEntries);
   const [description, setDesc] = useState("");
   const [amount, setAmount] = useState("");
@@ -47,19 +55,8 @@ function App() {
   const [totalIncome,setTotalIncome] = useState(0);
   const [totalExpenses, setTotalExpenses] = useState(0);
   const [balance, setBalance] = useState(0);
-  
-useEffect(()=>{
-  if(!isOpen && idToEdit){
-    const newEntries = [...entries];
-    const changedIndex = entries.findIndex(entry => entry.id === idToEdit);
-    newEntries[changedIndex].description = description;    
-    newEntries[changedIndex].value = amount;    
-    newEntries[changedIndex].isExpense = isExpense;   
-    setEntries(newEntries);
-    resetEntry();
-  }// eslint-disable-next-line
-},[isOpen]); 
-
+  const [error,setErrorFlag] = useState();
+  var [idCounter,setIdCounter] = useState(initialEntries.length);
 
 useEffect(() => {
   let totalIncomeAmount = 0;
@@ -87,41 +84,83 @@ entries.map(entry => {
   }
 
   const handleAddTxn = () =>{
-
-    if(amount === "" || description === ""){
+    if(Number(amount) === null || description === ""){
       alert("Please enter value/values!!!");
       return;
     }
     if (isExpense && balance === 0) {
-      alert("Cannot add an expence when no balance");
+      alert("Cannot add an expense when no balance");
       resetEntry();
       return;
     }
-    if(amount > balance && isExpense){
+    if(Number(amount) > balance && isExpense){
       alert("Cannot spend more than the balance in account");
       return;
     }
+    if(isNaN(+amount)){
+      alert("Please enter a valid value for amount");
+      return;
+    }
 
-    var newEntry = entries.length+1;
-    const updatedHistoryBlock = entries.concat({id: newEntry, description:description, value: amount, isExpense});
+    idCounter=idCounter+1;
+    setIdCounter(idCounter);
+
+    const updatedHistoryBlock = entries.concat({id: idCounter, description:description, value: amount, isExpense});
     setEntries(updatedHistoryBlock);
     resetEntry();
   }
 
-  const editModalEntry = id => {
+  const modalDisplayValues = id => {
+    setIsOpen(true);
+    setErrorFlag();
     let selectedIndex = entries.findIndex(entry => entry.id === id);
     const entry = entries[selectedIndex];
     setIdToEdit(id);
     setDesc(entry.description);
-    setAmount(entry.value);
+    setAmount(Number(entry.value));
     setTxnType(entry.isExpense);
-    setIsOpen(true);
   }
+
+  const modalEditvalues = idToEdit => {
+  //  setIsOpen(false);
+    const newEntries = [...entries];
+    const changedIndex = entries.findIndex(entry => entry.id === idToEdit);
+
+     if(amount === "" && description !== ""){
+       setErrorFlag(errorFlags[1]);
+       return;
+      }
+    if(description === "" && amount !== ""){
+       setErrorFlag(errorFlags[3]);
+       return;
+      } 
+       
+    if (isExpense && balance === 0) {
+       setErrorFlag(errorFlags[4]);
+      return;
+    }
+    if(Number(amount) > balance && isExpense){
+       setErrorFlag(errorFlags[5]);
+      return;
+    }  
+    if(isNaN(+amount)){
+       setErrorFlag(errorFlags[2]);
+      return;
+    }
+
+    newEntries[changedIndex].description = description;    
+    newEntries[changedIndex].value = amount;    
+    newEntries[changedIndex].isExpense = isExpense;   
+    setEntries(newEntries);
+    resetEntry();   
+  
+}
 
   function resetEntry(){    
     setDesc("");
     setAmount("");
     setTxnType(true);
+    if(isOpen){setIsOpen(false);}
   }
 
   return (
@@ -134,13 +173,12 @@ entries.map(entry => {
         <DisplayGrid totalIncome={totalIncome} totalExpenses = {totalExpenses}/>
         <MainHeader title="History" type="h3" />
         {(entries.length > 0) ?
-        <HistoryBlock entries={entries} handleDelete ={handleDelete} editModalEntry={editModalEntry}/> :  <p style={{color:"red"}}>Nothing to show here</p>}
+        <HistoryBlock entries={entries} handleDelete ={handleDelete} modalDisplayValues={modalDisplayValues}/> :  <p style={{color:"red"}}>Nothing to show here</p>}
 
         <MainHeader title="Add a new Transaction" type="h3"/> 
-        <NewTxn handleAddTxn = {handleAddTxn} description={description} amount={amount} isExpense={isExpense} setDesc={setDesc} setAmount={setAmount} setTxnType={setTxnType}/>
+        <NewTxn handleAddTxn = {handleAddTxn} resetEntry={resetEntry} description={description} amount={amount} isExpense={isExpense} setDesc={setDesc} setAmount={setAmount} setTxnType={setTxnType}/>
     
-    {/* <InterviewQuestion /> */}
-    <ModalEdit isOpen= {isOpen} setIsOpen={setIsOpen} description = {description} amount = {amount} isExpense = {isExpense} setDesc={setDesc} setAmount={setAmount} setTxnType={setTxnType}/>
+    <ModalEdit idToEdit={idToEdit} resetEntry={resetEntry} isOpen= {isOpen} description = {description} amount = {amount} isExpense = {isExpense} setDesc={setDesc} setAmount={setAmount} setTxnType={setTxnType} modalEditvalues={modalEditvalues} error = {error}/>
     </Container>
 
      );

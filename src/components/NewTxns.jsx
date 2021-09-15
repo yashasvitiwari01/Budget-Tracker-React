@@ -2,8 +2,9 @@ import React from "react";
 import { Button } from "semantic-ui-react";
 import NewTxnForm from "./NewTxnForm"
 
-export default function NewTxn({handleAddTxn, description,amount,isExpense, setDesc,setAmount,setTxnType}){
-    return(
+export default function NewTxn({handleAddTxn, resetEntry, description,amount,isExpense, setDesc,setAmount,setTxnType}){
+  
+  return(
     // <Form>
     <>
       <NewTxnForm description={description}
@@ -13,7 +14,7 @@ export default function NewTxn({handleAddTxn, description,amount,isExpense, setD
                   setAmount = {setAmount}
                   setTxnType={setTxnType}/>
           <Button.Group style={{marginTop:"20px"}}>
-            <Button>Cancel</Button>   
+            <Button onClick={()=>resetEntry()}>Cancel</Button>   
             <Button.Or/>
             <Button primary onClick={()=>handleAddTxn()}>Ok</Button>
           </Button.Group>

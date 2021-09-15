@@ -1,8 +1,8 @@
 import React from "react";
-import { Button, Modal } from "semantic-ui-react";
+import { Button, Modal,Label } from "semantic-ui-react";
 import NewTxnForm from "./NewTxnForm";
 
-export default function ModalEdit({isOpen, setIsOpen, description, amount, isExpense, setDesc,setAmount,setTxnType}){
+export default function ModalEdit({error,resetEntry,idToEdit, isOpen, description, amount, isExpense, setDesc,setAmount,setTxnType, modalEditvalues}){
     return(
        <Modal open={isOpen}>
            <Modal.Header>Edit Entry</Modal.Header>
@@ -15,9 +15,11 @@ export default function ModalEdit({isOpen, setIsOpen, description, amount, isExp
                 setAmount = {setAmount} 
                 setTxnType={setTxnType}
                 /></Modal.Content>
+            {error ? <Label style={{color:"red"}}>{error}</Label> : null}
+
            <Modal.Actions>
-                <Button onClick={()=>setIsOpen(false)} negative>Cancel</Button>
-                <Button onClick={()=>setIsOpen(false)} primary>Save</Button>
+                <Button onClick={()=>resetEntry()} negative>Cancel</Button>
+                <Button onClick={()=>modalEditvalues(idToEdit) } primary>Save</Button>
            </Modal.Actions>          
        </Modal>
     )

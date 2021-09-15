@@ -2,7 +2,7 @@ import React from "react";
 import { Container } from "semantic-ui-react";
 import History from "./History";
 // export default function History({description, value, isExpense= false}){
-export default function HistoryBlock ({entries, handleDelete,editModalEntry}){
+export default function HistoryBlock ({entries, handleDelete,modalDisplayValues}){
     return(
         <Container>
         {/* {entries.map((entry) => {
@@ -17,7 +17,7 @@ export default function HistoryBlock ({entries, handleDelete,editModalEntry}){
             // in the called component
             entry = {entry}  
             handleDelete ={handleDelete}
-            editModalEntry = {editModalEntry} />
+            modalDisplayValues = {modalDisplayValues} />
         ))}
 
 {/* above block of statements is equivalent to the one written below as above we are looping through the
